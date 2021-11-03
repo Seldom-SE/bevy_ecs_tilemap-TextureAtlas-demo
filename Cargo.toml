@@ -1,0 +1,10 @@
+[package]
+name = "tilemap_texture_atlas"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.5.0"
+bevy_ecs_tilemap = "0.4.0"
+env_logger = "0.9.0"
+log = "0.4.14"
