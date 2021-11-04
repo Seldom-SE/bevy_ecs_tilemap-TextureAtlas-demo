@@ -23,7 +23,7 @@ fn startup(
     let texture_atlas_texture = textures.get(texture_atlas_texture_handle.clone()).unwrap();
     let lime_tile_handle = asset_server.get_handle("textures/lime.png");
     let lime_tile_index = texture_atlas.get_texture_index(&lime_tile_handle).unwrap();
-    texture_atlases.add(texture_atlas);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
     println!("Lime tile index: {}", lime_tile_index);
 
@@ -41,16 +41,17 @@ fn startup(
     let (mut layer_builder, _) = LayerBuilder::new(
         &mut commands,
         LayerSettings::new(
-            UVec2::new(2, 2),
-            UVec2::new(8, 8),
-            Vec2::new(16.0, 16.0),
-            Vec2::new(
+            MapSize(2, 2),
+            ChunkSize(8, 8),
+            TileSize(16.0, 16.0),
+            TextureSize(
                 texture_atlas_texture.size.width as f32,
                 texture_atlas_texture.size.height as f32,
             ),
         ),
         0u16,
         0u16,
+        None,
     );
 
     layer_builder.set_all(TileBundle {
@@ -76,6 +77,17 @@ fn startup(
         .insert(Transform::from_xyz(-128.0, -128.0, 0.0))
         .insert(GlobalTransform::default());
 
+    // draw a sprite from the atlas
+    commands.spawn_bundle(SpriteSheetBundle {
+        transform: Transform {
+            translation: Vec3::new(150.0, 0.0, 0.0),
+            scale: Vec3::splat(4.0),
+            ..Default::default()
+        },
+        sprite: TextureAtlasSprite::new(lime_tile_index as u32),
+        texture_atlas: texture_atlas_handle,
+        ..Default::default()
+    });
     // draw the atlas itself
     commands.spawn_bundle(SpriteBundle {
         material: materials.add(texture_atlas_texture_handle.into()),
